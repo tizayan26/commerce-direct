@@ -1,0 +1,66 @@
+{
+    "name": "Commerce Direct",
+    "version": "1.3.3",
+    "description": "The Commerce Direct browser extension enables eCommerce brands to build direct relationships with their repeat customers using AI/ML generated discounts.",
+    "author": "Nasirul Akbar Khan",
+   
+    "background": {
+      "scripts": ["assets/js/background.js"],
+      "persistent": true
+    },
+    
+    "content_scripts": [
+      {
+        "all_frames": true,
+  
+        "js": ["assets/js/libs/jquery-3.1.1.min.js", "assets/js/libs/common.js", "assets/js/content.js"],
+        "matches": ["*://www.google.com/*"],
+        "run_at": "document_end"
+      },
+      {
+        "all_frames": true,
+        "js": ["assets/js/libs/jquery-3.1.1.min.js", "assets/js/libs/common.js", "assets/js/popup.js"],
+        "exclude_matches" : ["https://www.google.com/*"],
+        "matches": [ "*://*/*Cart*","*://*/*cart*","*://*/*bag*","*://*/*trolly*","*://*/*trolley*","*://*/*carriage*","*://*/*basket*","*://*/*weagon*","*://*/*review*","*://*/*/checkouts"],
+        "run_at": "document_end"
+      },
+      {
+        "all_frames": true,
+        "js": ["assets/js/libs/jquery-3.1.1.min.js", "assets/js/libs/common.js","assets/js/success.js"],
+        "exclude_matches" : ["https://www.google.com/*"],
+        "matches": [ "*://*/*/checkouts/*/*thank_you*"],
+        "run_at": "document_end"
+      }
+      // ,
+      // {
+      //   "all_frames": true,
+      //   "js": ["assets/js/libs/jquery-3.1.1.min.js", "assets/js/libs/common.js","assets/js/redeem_success.js"],
+      //   "exclude_matches" : ["https://www.google.com/*"],
+      //   "matches": [ "https://*.rewardlink.io/r/1/checkout"],
+      //   "run_at": "document_end"
+      // }
+
+    ],
+    "manifest_version": 2,
+  
+    "browser_action": {
+      "default_icon": {   
+        "16": "assets/icons/cd-icon-16.png",
+        "32": "assets/icons/cd-icon-32.png",
+        "48": "assets/icons/cd-icon-48.png",
+        "128": "assets/icons/cd-icon-128.png"
+      }
+    },
+    "icons": {
+      "16": "assets/icons/cd-icon-16.png",
+      "32": "assets/icons/cd-icon-32.png",
+      "48": "assets/icons/cd-icon-48.png",
+      "128": "assets/icons/cd-icon-128.png"
+    },
+  
+    "web_accessible_resources": ["assets/icons/*", "assers/css/*"],
+  
+    "permissions": ["webNavigation","storage","http://*/","https://*/","*://*.tangocard.com/*"], 
+   
+    "update_url": "https://clients2.google.com/service/update2/crx"
+  }
