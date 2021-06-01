@@ -72,6 +72,35 @@ chrome.runtime.onMessage.addListener(
       }
   });
 //Modal popup
-chrome.browserAction.onClicked.addListener(function(tab){
-    chrome.tabs.sendMessage(tab.id,"toggle");
+// chrome.browserAction.onClicked.addListener(function(tab){
+//     chrome.tabs.sendMessage(tab.id,"toggle");
+// });
+
+
+chrome.runtime.onInstalled.addListener(function(details){
+    if(details.reason == "install"){
+        console.log("This is a first install!");
+        chrome.tabs.create({
+            url: "https://login.commerce.direct/login?client_id=7hjuil2nuuf2h4m0epq740bjlk&response_type=token&scope=email+openid+phone&redirect_uri=https://login.commerce.direct/",
+            active: true,
+        });
+    }
 });
+
+chrome.tabs.onActivated.addListener(function (info) {
+    var icon_disable = 'assets/icons/cd-icon-128-disable.png';
+    var icon_enable = 'assets/icons/cd-icon-128.png';
+    chrome.storage.local.get('authenticated', function(result) {
+        if (result.authenticated == true) {
+            chrome.browserAction.setIcon({ path: icon_enable });
+            //Modal popup
+            chrome.browserAction.onClicked.addListener(function(tab){
+                chrome.tabs.sendMessage(tab.id,"toggle");
+            });
+        } else {
+            chrome.browserAction.setIcon({ path: icon_disable });
+        }
+    })
+   
+  });
+  

@@ -8,8 +8,8 @@ var shadowRoot = host.attachShadow({
 });
 window.onload = function() {
     appendStyleInline(shadowRoot);
-    chrome.storage.local.get('fmsg', function(result) {
-        if (result.fmsg == true) {
+    chrome.storage.local.get(['fmsg','authenticated'], function(result) {
+        if (result.fmsg == true && result.authenticated == true) {
             dragElement(shadowRoot.getElementById("draggable_intro"));
             shadowRoot.getElementById("intro-close").addEventListener("click", function() {
                 shadowRoot.getElementById("draggable_intro").style.display = 'none';
@@ -374,10 +374,14 @@ $(document).ready(function() {
                                     if (array[index] !== undefined) {
                                         // console.log(url+':'+word);
                                         
+                                        // var regex = new RegExp(`\B${word}\B`, 'g');
                                         var regex = new RegExp(word, 'g');
-                                        var regex1 = new RegExp(url, 'g');
+                                        // var regex = new RegExp(`/(?:\W|^)(\Q$${word}\E)(?:\W|$)/i`,'g');
+                                        // /(?:\W|^)(\Q$word\E)(?:\W|$)/i
+                                        // var regex1 = new RegExp(url, 'g');
+                                        // var regex1 = new RegExp(`/(?:\W|^)(\Q$${url}\E)(?:\W|$)/i`,'g');
                                         
-                                        if (url.match(regex) != null || word.match(regex1) != null) {
+                                        if (url.match(regex) != null) {//|| word.match(regex1) != null
                                             // console.log(index);
                                             console.log(data);
                                             console.log('option 7',url + ':' + word + ':' + word.indexOf(url));

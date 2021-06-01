@@ -416,13 +416,13 @@ function getHostName(url) {
 }
 
 function init(dl, rl) {
-    chrome.storage.local.get(['userid', 'fmsg'], function(result) {
-        if (result.userid === undefined) {
+    chrome.storage.local.get(['userid', 'fmsg','authenticated'], function(result) {
+        if (result.userid === undefined && result.authenticated == true) {
             loadLoginShadowDOM();
 
         } else {
             user_id = result.userid;
-            if (result.fmsg == true)
+            if (result.fmsg == true && result.authenticated == true)
                 firstMsg(user_id);
         }
     });
