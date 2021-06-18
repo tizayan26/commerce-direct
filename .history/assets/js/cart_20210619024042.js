@@ -144,15 +144,14 @@ function loadDirectPriceShadowDOM() {
 
                                 data.brands.forEach(function(brand, index) {
                                     
-                                    if (brand.brandName.match(/(Commerce Direct)/g)) {
+                                    if (!brand.brandName.match(/(Commerce Direct)/g)) {
                                         li = document.createElement('li');
                                         li.className = 'card';
-                                        li.setAttribute("utid",brand.items[0].utid);
                                         img= document.createElement('img')
                                         img.src = brand.imageUrls["130w-326ppi"];
                                         li.appendChild(img);
                                         frame.appendChild(li);
-                                        // frame.innerHTML = `<li class="card"><img src="${brand.imageUrls["130w-326ppi"]}"></li>`;
+                                        frame.innerHTML = `<li class="card"><img src="${brand.imageUrls["130w-326ppi"]}"></li>`;
                                     }
                                 })
                                 var li = document.createElement("li");
@@ -181,23 +180,22 @@ function loadDirectPriceShadowDOM() {
                         openRewardModalAmt.addEventListener('click', function() {
                             rewardModalAmt.classList.toggle('visible');
                         });
+                        var openCardsModal = shadowRoot.getElementById('openCards');
+                        var modalCards = shadowRoot.getElementById('modal-reward');
+                        var closeCardModal = shadowRoot.getElementById('close-rewardmodal');
 
-                        // var openCardsModal = shadowRoot.getElementById('openCards');
-                        // var modalCards = shadowRoot.getElementById('modal-reward');
-                        // var closeCardModal = shadowRoot.getElementById('close-rewardmodal');
-
-                        // openCardsModal.addEventListener('click', function() {
-                        //   modalCards.classList.toggle('visible');
-                        // });
-                        
-                        // closeCardModal.addEventListener('click', function() {
-                        //   modalCards.classList.remove('visible');
-                        // });
-                        var openRewardModal = shadowRoot.getElementById('next-modal');
-                        var closeRewardModal = shadowRoot.getElementById('close-rewardmodal');
-                        closeRewardModalAmt.addEventListener('click', function() {
-                          rewardModalAmt.classList.remove('visible');
+                        openCardsModal.addEventListener('click', function() {
+                          modalCards.classList.toggle('visible');
                         });
+                        
+                        closeCardModal.addEventListener('click', function() {
+                          modalCards.classList.remove('visible');
+                        });
+                        var openRewardModal = shadowRoot.getElementById('next-modal');
+                        // closeRewardModalAmt.addEventListener('click', function() {
+                        //   rewardModalAmt.classList.remove('visible');
+                        // });
+                        // var closeRewardModal = shadowRoot.getElementById('close-rewardmodal');
 
                         openRewardModal.addEventListener('click', function(e) {
                             e.preventDefault();

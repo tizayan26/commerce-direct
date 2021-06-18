@@ -1,5 +1,6 @@
 $(document).ready(function(){
     var user_id = $.urlParam('id_token').substring(0,20);
+    alert(user_id);
     chrome.runtime.sendMessage({
         contentScriptQuery: 'fetchUrl',
         url: `${cdirect_api_endpoint}username?userid=${user_id}`,

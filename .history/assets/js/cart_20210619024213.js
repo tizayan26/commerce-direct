@@ -147,12 +147,11 @@ function loadDirectPriceShadowDOM() {
                                     if (brand.brandName.match(/(Commerce Direct)/g)) {
                                         li = document.createElement('li');
                                         li.className = 'card';
-                                        li.setAttribute("utid",brand.items[0].utid);
                                         img= document.createElement('img')
                                         img.src = brand.imageUrls["130w-326ppi"];
                                         li.appendChild(img);
                                         frame.appendChild(li);
-                                        // frame.innerHTML = `<li class="card"><img src="${brand.imageUrls["130w-326ppi"]}"></li>`;
+                                        frame.innerHTML = `<li class="card"><img src="${brand.imageUrls["130w-326ppi"]}"></li>`;
                                     }
                                 })
                                 var li = document.createElement("li");

@@ -57,8 +57,8 @@ function loadDirectPriceShadowDOM() {
               <div class="col-md-8 col-sm-8 col-xs-8" id="pts_msg">Total Points Balance</div>
             </div>
             <div class="row row-grey">
-              <div class="col-md-6 col-sm-6 col-xs-6"><a href="https://commercedirect.io/rewards" target="_blank" style="float:right;">Click to Browse</a><img class="cards" style="float:right;" src="${chrome.extension.getURL("assets/icons/cd_card.png")}" id="openCards"/></div>
-              <div class="col-md-6 col-sm-6 col-xs-6"><a id="next-modal">Click to Redeem</a><img class="cards" src="${chrome.extension.getURL("assets/icons/point_card.png")}"/></div>
+              <div class="col-md-6 col-sm-6 col-xs-6"><a style="float:right;">Click to Browse</a><img class="cards" style="float:right;" src="${chrome.extension.getURL("assets/icons/cd_card.png")}" id="openCards"/></div>
+              <div class="col-md-6 col-sm-6 col-xs-6"><a>Click to Redeem</a><img class="cards" src="${chrome.extension.getURL("assets/icons/point_card.png")}"/></div>
             </div>
             
           </div>
@@ -144,10 +144,9 @@ function loadDirectPriceShadowDOM() {
 
                                 data.brands.forEach(function(brand, index) {
                                     
-                                    if (brand.brandName.match(/(Commerce Direct)/g)) {
+                                    if (!brand.brandName.match(/(Commerce Direct)/g)) {
                                         li = document.createElement('li');
                                         li.className = 'card';
-                                        li.setAttribute("utid",brand.items[0].utid);
                                         img= document.createElement('img')
                                         img.src = brand.imageUrls["130w-326ppi"];
                                         li.appendChild(img);
@@ -155,19 +154,19 @@ function loadDirectPriceShadowDOM() {
                                         // frame.innerHTML = `<li class="card"><img src="${brand.imageUrls["130w-326ppi"]}"></li>`;
                                     }
                                 })
-                                var li = document.createElement("li");
-                                li.setAttribute("id", "vcard");
-                                li.classList.add('card');
-                                li.classList.add('virtual-card');
-                                li.innerHTML = amt;
-                                frame.appendChild(li);
-                                let listItems = shadowRoot.querySelectorAll('.card-container li');
-                                listItems.forEach((item, index) => {
-                                    item.addEventListener('click', (event) => {
-                                        makeOrder(event.currentTarget.getAttribute('utid'));
-                                    });
+                                // var li = document.createElement("li");
+                                // li.setAttribute("id", "vcard");
+                                // li.classList.add('card');
+                                // li.classList.add('virtual-card');
+                                // li.innerHTML = amt;
+                                // frame.appendChild(li);
+                                // let listItems = shadowRoot.querySelectorAll('.card-container li');
+                                // listItems.forEach((item, index) => {
+                                //     item.addEventListener('click', (event) => {
+                                //         makeOrder(event.currentTarget.getAttribute('utid'));
+                                //     });
 
-                                });
+                                // });
                             }
                         );
 
@@ -176,33 +175,30 @@ function loadDirectPriceShadowDOM() {
                         var openRewardModalAmt = shadowRoot.getElementById('rewardlink');
                         var rewardModalAmt = shadowRoot.getElementById('modal-reward-amount');
                         var closeRewardModalAmt = shadowRoot.getElementById('close-rewardmodal-amount');
-                        var rewardModal = shadowRoot.getElementById('modal-reward');
+                        // var rewardModal = shadowRoot.getElementById('modal-reward');
 
                         openRewardModalAmt.addEventListener('click', function() {
                             rewardModalAmt.classList.toggle('visible');
                         });
+                        var openCardsModal = shadowRoot.getElementById('openCards');
+                        var modalCards = shadowRoot.getElementById('modal-reward');
+                        var closeCardModal = shadowRoot.getElementById('close-rewardmodal');
 
-                        // var openCardsModal = shadowRoot.getElementById('openCards');
-                        // var modalCards = shadowRoot.getElementById('modal-reward');
-                        // var closeCardModal = shadowRoot.getElementById('close-rewardmodal');
-
-                        // openCardsModal.addEventListener('click', function() {
-                        //   modalCards.classList.toggle('visible');
-                        // });
-                        
-                        // closeCardModal.addEventListener('click', function() {
-                        //   modalCards.classList.remove('visible');
-                        // });
-                        var openRewardModal = shadowRoot.getElementById('next-modal');
-                        var closeRewardModal = shadowRoot.getElementById('close-rewardmodal');
-                        closeRewardModalAmt.addEventListener('click', function() {
-                          rewardModalAmt.classList.remove('visible');
+                        openCardsModal.addEventListener('click', function() {
+                          modalCards.classList.toggle('visible');
                         });
+                        
+                        closeCardModal.addEventListener('click', function() {
+                          modalCards.classList.remove('visible');
+                        });
+                        var openRewardModal = shadowRoot.getElementById('next-modal');
+                        // closeRewardModalAmt.addEventListener('click', function() {
+                        //   rewardModalAmt.classList.remove('visible');
+                        // });
+                        // var closeRewardModal = shadowRoot.getElementById('close-rewardmodal');
 
-                        openRewardModal.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            // var asked_amt = parseFloat(shadowRoot.getElementById("reward_amt").value).toFixed(2);
-                            var asked_amt = parseFloat(1).toFixed(2);
+                        openRewardModal.addEventListener('click', function() {
+                            var asked_amt = parseFloat(shadowRoot.getElementById("reward_amt").value).toFixed(2);
                             shadowRoot.getElementById('vcard').innerHTML = asked_amt;
                             chrome.runtime.sendMessage({
                                     contentScriptQuery: 'fetchUrl',
@@ -217,13 +213,13 @@ function loadDirectPriceShadowDOM() {
                                         }, function() {
                                             console.log('Amount Stored!' + asked_amt);
                                         });
-                                        // shadowRoot.getElementById("pts_validation_msg").innerText = '';
+                                        shadowRoot.getElementById("pts_validation_msg").innerText = '';
                                         rewardModal.classList.toggle('visible');
                                     } else {
-                                        // shadowRoot.getElementById("pts_validation_msg").innerText = result.body.message;
-                                        // setTimeout(function() {
-                                        //     shadowRoot.getElementById("pts_validation_msg").innerText = '';
-                                        // }, 5000)
+                                        shadowRoot.getElementById("pts_validation_msg").innerText = result.body.message;
+                                        setTimeout(function() {
+                                            shadowRoot.getElementById("pts_validation_msg").innerText = '';
+                                        }, 5000)
 
                                     }
                                 }

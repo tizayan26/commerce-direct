@@ -18,7 +18,7 @@ function loadDirectPriceShadowDOMP() {
             <img class="cd-logo-b" src="${extension_icon}" alt="${extension_name}"/>
             <div class="modal-title" id="exampleModalLabel"><span class="plus">+</span> Welcome <span id="user">User</span>!<br>Thanks for earning eGift Card Rewards with us. Remember to be on the lookout for plugin notifications while you are shopping on Google Search & Shopping tabs. Learn more about how to earn and redeem here: <a href="https://www.commercedirect.io">commercedirect.io</a></div>
           </div>
-          <div class="modal-body"><a href="https://login.commercedirect.io/logout" style="float: right;">Logout</a></div>
+          <div class="modal-body"><a href="https://login.commercedirect.io/logout" style="float: right;">Logout</div>
           <div class="modal-footer">
             <div class="row row-grey">
               <div class="col-md-2 col-sm-2 col-xs-2"><img src="${chrome.extension.getURL("assets/icons/cd-points.png")}" width="40" height="40"/></div><div class="col-md-2 col-sm-2 col-xs-2" id="sp"> 0</div><div class="col-md-4 col-sm-4 col-xs-4" id="pts_msg">Total Points Balance</div><div class="col-md-4 col-sm-4 col-xs-4" id="reward"></div>

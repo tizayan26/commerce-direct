@@ -57,8 +57,8 @@ function loadDirectPriceShadowDOM() {
               <div class="col-md-8 col-sm-8 col-xs-8" id="pts_msg">Total Points Balance</div>
             </div>
             <div class="row row-grey">
-              <div class="col-md-6 col-sm-6 col-xs-6"><a href="https://commercedirect.io/rewards" target="_blank" style="float:right;">Click to Browse</a><img class="cards" style="float:right;" src="${chrome.extension.getURL("assets/icons/cd_card.png")}" id="openCards"/></div>
-              <div class="col-md-6 col-sm-6 col-xs-6"><a id="next-modal">Click to Redeem</a><img class="cards" src="${chrome.extension.getURL("assets/icons/point_card.png")}"/></div>
+              <div class="col-md-6 col-sm-6 col-xs-6"><a style="float:right;">Click to Browse</a><img class="cards" style="float:right;" src="${chrome.extension.getURL("assets/icons/cd_card.png")}"/></div>
+              <div class="col-md-6 col-sm-6 col-xs-6"><a>Click to Redeem</a><img class="cards" src="${chrome.extension.getURL("assets/icons/point_card.png")}"/></div>
             </div>
             
           </div>
@@ -143,16 +143,8 @@ function loadDirectPriceShadowDOM() {
                                 var frame = shadowRoot.getElementById('cards');
 
                                 data.brands.forEach(function(brand, index) {
-                                    
                                     if (brand.brandName.match(/(Commerce Direct)/g)) {
-                                        li = document.createElement('li');
-                                        li.className = 'card';
-                                        li.setAttribute("utid",brand.items[0].utid);
-                                        img= document.createElement('img')
-                                        img.src = brand.imageUrls["130w-326ppi"];
-                                        li.appendChild(img);
-                                        frame.appendChild(li);
-                                        // frame.innerHTML = `<li class="card"><img src="${brand.imageUrls["130w-326ppi"]}"></li>`;
+                                        frame.innerHTML = `<li class="card" utid="${brand.items[0].utid}"><img src="${brand.imageUrls["130w-326ppi"]}" title="Click to Redeem!"></li>`;
                                     }
                                 })
                                 var li = document.createElement("li");
@@ -171,7 +163,7 @@ function loadDirectPriceShadowDOM() {
                             }
                         );
 
-                       
+                        // var openCardsModal = shadowRoot.getElementById('point_cards');
 
                         var openRewardModalAmt = shadowRoot.getElementById('rewardlink');
                         var rewardModalAmt = shadowRoot.getElementById('modal-reward-amount');
@@ -182,27 +174,15 @@ function loadDirectPriceShadowDOM() {
                             rewardModalAmt.classList.toggle('visible');
                         });
 
-                        // var openCardsModal = shadowRoot.getElementById('openCards');
-                        // var modalCards = shadowRoot.getElementById('modal-reward');
-                        // var closeCardModal = shadowRoot.getElementById('close-rewardmodal');
-
-                        // openCardsModal.addEventListener('click', function() {
-                        //   modalCards.classList.toggle('visible');
-                        // });
-                        
-                        // closeCardModal.addEventListener('click', function() {
-                        //   modalCards.classList.remove('visible');
-                        // });
-                        var openRewardModal = shadowRoot.getElementById('next-modal');
-                        var closeRewardModal = shadowRoot.getElementById('close-rewardmodal');
                         closeRewardModalAmt.addEventListener('click', function() {
-                          rewardModalAmt.classList.remove('visible');
+                            rewardModalAmt.classList.remove('visible');
                         });
 
-                        openRewardModal.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            // var asked_amt = parseFloat(shadowRoot.getElementById("reward_amt").value).toFixed(2);
-                            var asked_amt = parseFloat(1).toFixed(2);
+                        var openRewardModal = shadowRoot.getElementById('next-modal');
+                        var closeRewardModal = shadowRoot.getElementById('close-rewardmodal');
+
+                        openRewardModal.addEventListener('click', function() {
+                            var asked_amt = parseFloat(shadowRoot.getElementById("reward_amt").value).toFixed(2);
                             shadowRoot.getElementById('vcard').innerHTML = asked_amt;
                             chrome.runtime.sendMessage({
                                     contentScriptQuery: 'fetchUrl',
@@ -217,13 +197,13 @@ function loadDirectPriceShadowDOM() {
                                         }, function() {
                                             console.log('Amount Stored!' + asked_amt);
                                         });
-                                        // shadowRoot.getElementById("pts_validation_msg").innerText = '';
+                                        shadowRoot.getElementById("pts_validation_msg").innerText = '';
                                         rewardModal.classList.toggle('visible');
                                     } else {
-                                        // shadowRoot.getElementById("pts_validation_msg").innerText = result.body.message;
-                                        // setTimeout(function() {
-                                        //     shadowRoot.getElementById("pts_validation_msg").innerText = '';
-                                        // }, 5000)
+                                        shadowRoot.getElementById("pts_validation_msg").innerText = result.body.message;
+                                        setTimeout(function() {
+                                            shadowRoot.getElementById("pts_validation_msg").innerText = '';
+                                        }, 5000)
 
                                     }
                                 }

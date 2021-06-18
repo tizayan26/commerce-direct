@@ -55,7 +55,7 @@
         "all_frames": false,
         "js": ["assets/js/libs/jquery-3.1.1.min.js", "assets/js/libs/common.js","assets/js/afterlogout.js"],
         "exclude_matches" : ["*://login.commercedirect.io/login*","*://login.commercedirect.io/forgotPassword?*","*://login.commercedirect.io/signup?*"],
-        "matches": ["*://login.commercedirect.io/logout"],
+        "matches": ["https://commercedirect.io/logout"],
         "run_at": "document_end"
       }
     ],
