@@ -37,7 +37,7 @@ function loadDirectPriceShadowDOMP() {
           </div>
           <div class="modal-footer">
             <div class="row row-grey">
-              <div class="col-md-4 col-sm-4 col-xs-4"><input class="reward-amt" id="reward_amt" type="text" /></div>
+              <div class="col-md-4 col-sm-4 col-xs-4"><input class="reward-amt" id="reward_amt_popup" type="text" /></div>
               <div class="col-md-4 col-sm-4 col-xs-4"><span id="est_pts">100</span> Points = $<span id="est_usd">1</span><p  class="pts-validation-msg" id="pts_validation_msg"><p></div>
               <div class="col-md-4 col-sm-4 col-xs-4"><a href="#" id="next-modal">Redeem Rewards!</a></div>
             </div>
@@ -67,10 +67,14 @@ function loadDirectPriceShadowDOMP() {
         <div class="modal-footer">
           <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-              <div class="card-container">
-                <ul class="cards" id="cards">
-                </ul>
-                <p style="padding:0 15px;color:#ed2027;text-align:justify;">Note that once clicked, that amount must be redeemed during that session as balance will be automatically deducted from your balance</p>
+              <div class="col-md-6 col-sm-6 col-xs-6" style="text-align:right;"><a href="https://commercedirect.io/rewards" target="_blank">Click to Browse</a></div>
+              <div class="col-md-6 col-sm-6 col-xs-6" style="text-align:left;"><a id="redeem_link">Click to Redeem</a></div>
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="card-container">
+                  <ul class="cards" id="cards">
+                  </ul>
+                  <p style="padding:0 15px;color:#ed2027;text-align:justify;">Note that once the card above is clicked, the displayed point amount must be redeemed during the same session. This amount will be automatically deducted from your balance.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -88,7 +92,7 @@ function loadDirectPriceShadowDOMP() {
             shadowRootPopup.getElementById("user2").innerText = user_id;
         }
     });
-    shadowRootPopup.getElementById('reward_amt').addEventListener("keyup", function() {
+    shadowRootPopup.getElementById('reward_amt_popup').addEventListener("keyup", function() {
         shadowRootPopup.getElementById('est_usd').innerText = this.value / 100;
         shadowRootPopup.getElementById('est_pts').innerText = this.value;
     });
@@ -123,25 +127,34 @@ function loadDirectPriceShadowDOMP() {
                             function(result) {
                                 var data = JSON.parse(result);
                                 var frame = shadowRootPopup.getElementById('cards');
-
+                                var vli = document.createElement("li");
                                 data.brands.forEach(function(brand, index) {
                                     if (brand.brandName.match(/(Commerce Direct)/g)) {
-                                        frame.innerHTML = `<li class="card" utid="${brand.items[0].utid}"><img src="${brand.imageUrls["130w-326ppi"]}" title="Click to Redeem!"></li>`;
+                                      li = document.createElement('li');
+                                      li.className = 'card';
+                                      // li.setAttribute("utid",brand.items[0].utid);
+                                      // vli.setAttribute("utid",brand.items[0].utid);
+                                      shadowRootPopup.getElementById('redeem_link').setAttribute("utid",brand.items[0].utid);
+                                      img= document.createElement('img')
+                                      img.src = brand.imageUrls["130w-326ppi"];
+                                      li.appendChild(img);
+                                      frame.appendChild(li);
+                                      // frame.innerHTML = `<li class="card" utid="${brand.items[0].utid}"><img src="${brand.imageUrls["130w-326ppi"]}" title="Click to Redeem!"></li>`;
                                     }
                                 })
-                                var li = document.createElement("li");
-                                li.setAttribute("id", "vcard");
-                                li.classList.add('card');
-                                li.classList.add('virtual-card');
-                                li.innerHTML = amt;
-                                frame.appendChild(li);
+                              
+                                vli.setAttribute("id", "vcard");
+                                vli.classList.add('card');
+                                vli.classList.add('virtual-card');
+                                vli.innerHTML = amt;
+                                frame.appendChild(vli);
                                 let listItems = shadowRootPopup.querySelectorAll('.card-container li');
-                                listItems.forEach((item, index) => {
-                                    item.addEventListener('click', (event) => {
-                                        makeOrder(event.currentTarget.getAttribute('utid'));
-                                    });
+                                // listItems.forEach((item, index) => {
+                                //     item.addEventListener('click', (event) => {
+                                //         makeOrder(event.currentTarget.getAttribute('utid'));
+                                //     });
 
-                                });
+                                // });
                             }
                         );
 
@@ -150,6 +163,7 @@ function loadDirectPriceShadowDOMP() {
                         var rewardModalAmt = shadowRootPopup.getElementById('modal-reward-amount');
                         var closeRewardModalAmt = shadowRootPopup.getElementById('close-rewardmodal-amount');
                         var rewardModal = shadowRootPopup.getElementById('modal-reward');
+                        var redeemLink = shadowRootPopup.getElementById('redeem_link');
 
                         openRewardModalAmt.addEventListener('click', function() {
                             rewardModalAmt.classList.toggle('visible');
@@ -163,8 +177,8 @@ function loadDirectPriceShadowDOMP() {
                         var closeRewardModal = shadowRootPopup.getElementById('close-rewardmodal');
 
                         openRewardModal.addEventListener('click', function() {
-                            var asked_amt = parseFloat(shadowRootPopup.getElementById("reward_amt").value).toFixed(2);
-                            shadowRootPopup.getElementById('vcard').innerHTML = asked_amt;
+                            var asked_amt = parseFloat(shadowRootPopup.getElementById("reward_amt_popup").value).toFixed(2);
+                            shadowRootPopup.getElementById('vcard').innerHTML = asked_amt + " Points";
                             chrome.runtime.sendMessage({
                                     contentScriptQuery: 'fetchUrl',
                                     url: cdirect_api_endpoint + 'userpts/ptsamt?userid=' + encodeURIComponent(user_id) + '&uid=' + encodeURIComponent(uid) + '&vid=' + encodeURIComponent(vid) + '&ptsamt=' + asked_amt,
@@ -189,6 +203,12 @@ function loadDirectPriceShadowDOMP() {
                                     }
                                 }
                             );
+                        });
+                        
+                        redeemLink.addEventListener('click', function(e) {
+                          e.preventDefault();
+                          // alert(this.getAttribute('utid'));
+                          makeOrder(this.getAttribute('utid'));
                         });
 
                         closeRewardModal.addEventListener('click', function() {

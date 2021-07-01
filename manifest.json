@@ -6,7 +6,7 @@
    
     "background": {
       "scripts": ["assets/js/background.js"],
-      "persistent": true
+      "persistent": false
     },
     
     "content_scripts": [
@@ -76,9 +76,9 @@
       "128": "assets/icons/cd-icon-128.png"
     },
   
-    "web_accessible_resources": ["assets/icons/*"],
+    "web_accessible_resources": ["assets/icons/*","assets/js/inject.js"],
   
-    "permissions": ["tabs","webNavigation","storage","*://*.tangocard.com/*"], 
+    "permissions": ["tabs","activeTab","webNavigation","storage","*://*.tangocard.com/*"], 
 
      
     "content_security_policy":"script-src  'self'; object-src 'self'; img-src 'self'",

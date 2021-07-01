@@ -81,10 +81,14 @@ function loadDirectPriceShadowDOM() {
         <div class="modal-footer">
           <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-              <div class="card-container">
-                <ul class="cards" id="cards">
-                </ul>
-                <p style="color:#ed2027;text-align:justify;">Note that once clicked, that amount must be redeemed during that session as balance will be automatically deducted from your balance</p>
+              <div class="col-md-6 col-sm-6 col-xs-6" style="text-align:right;"><a href="https://commercedirect.io/rewards" target="_blank">Click to Browse</a></div>
+              <div class="col-md-6 col-sm-6 col-xs-6" style="text-align:left;"><a id="redeem_link">Click to Redeem</a></div>
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="card-container">
+                  <ul class="cards" id="cards">
+                  </ul>
+                  <p style="color:#ed2027;text-align:justify;">Note that once clicked, that amount must be redeemed during that session as balance will be automatically deducted from your balance</p>
+                </div>
               </div>
             </div>
           </div>
@@ -105,7 +109,7 @@ function loadDirectPriceShadowDOM() {
         shadowRoot.getElementById('est_usd').innerText = this.value / 100;
         shadowRoot.getElementById('est_pts').innerText = this.value;
     });
-    setCartData();
+    // setCartData();
     chrome.storage.local.get(['userid', 'redeemed', 'asked_amt'], function(result) {
         if (result.userid !== undefined) {
             user_id = result.userid;
@@ -134,27 +138,36 @@ function loadDirectPriceShadowDOM() {
                                 method: 'GET'
                             },
                             function(result) {
-                                var data = JSON.parse(result);
-                                var frame = shadowRoot.getElementById('cards');
+                              var data = JSON.parse(result);
+                              var frame = shadowRoot.getElementById('cards');
+                              var vli = document.createElement("li");
+                              data.brands.forEach(function(brand, index) {
+                                  if (brand.brandName.match(/(Commerce Direct)/g)) {
+                                    li = document.createElement('li');
+                                    li.className = 'card';
+                                    li.setAttribute("utid",brand.items[0].utid);
+                                    vli.setAttribute("utid",brand.items[0].utid);
+                                    shadowRoot.getElementById('redeem_link').setAttribute("utid",brand.items[0].utid);
+                                    img= document.createElement('img')
+                                    img.src = brand.imageUrls["130w-326ppi"];
+                                    li.appendChild(img);
+                                    frame.appendChild(li);
+                                    // frame.innerHTML = `<li class="card" utid="${brand.items[0].utid}"><img src="${brand.imageUrls["130w-326ppi"]}" title="Click to Redeem!"></li>`;
+                                  }
+                              })
+                            
+                              vli.setAttribute("id", "vcard");
+                              vli.classList.add('card');
+                              vli.classList.add('virtual-card');
+                              vli.innerHTML = amt;
+                              frame.appendChild(vli);
+                              let listItems = shadowRoot.querySelectorAll('.card-container li');
+                              listItems.forEach((item, index) => {
+                                  item.addEventListener('click', (event) => {
+                                      makeOrder(event.currentTarget.getAttribute('utid'));
+                                  });
 
-                                data.brands.forEach(function(brand, index) {
-                                    if (brand.brandName.match(/(Commerce Direct)/g)) {
-                                        frame.innerHTML = `<li class="card" utid="${brand.items[0].utid}"><img src="${brand.imageUrls["130w-326ppi"]}" title="Click to Redeem!"></li>`;
-                                    }
-                                })
-                                var li = document.createElement("li");
-                                li.setAttribute("id", "vcard");
-                                li.classList.add('card');
-                                li.classList.add('virtual-card');
-                                li.innerHTML = amt;
-                                frame.appendChild(li);
-                                let listItems = shadowRoot.querySelectorAll('.card-container li');
-                                listItems.forEach((item, index) => {
-                                    item.addEventListener('click', (event) => {
-                                        makeOrder(event.currentTarget.getAttribute('utid'));
-                                    });
-
-                                });
+                              });
                             }
                         );
 
@@ -163,6 +176,7 @@ function loadDirectPriceShadowDOM() {
                         var rewardModalAmt = shadowRoot.getElementById('modal-reward-amount');
                         var closeRewardModalAmt = shadowRoot.getElementById('close-rewardmodal-amount');
                         var rewardModal = shadowRoot.getElementById('modal-reward');
+                        var redeemLink = shadowRoot.getElementById('redeem_link');
 
                         openRewardModalAmt.addEventListener('click', function() {
                             rewardModalAmt.classList.toggle('visible');
@@ -177,7 +191,7 @@ function loadDirectPriceShadowDOM() {
 
                         openRewardModal.addEventListener('click', function() {
                             var asked_amt = parseFloat(shadowRoot.getElementById("reward_amt").value).toFixed(2);
-                            shadowRoot.getElementById('vcard').innerHTML = asked_amt;
+                            shadowRoot.getElementById('vcard').innerHTML = asked_amt + " Points"
                             chrome.runtime.sendMessage({
                                     contentScriptQuery: 'fetchUrl',
                                     url: cdirect_api_endpoint + 'userpts/ptsamt?userid=' + encodeURIComponent(user_id) + '&uid=' + encodeURIComponent(uid) + '&vid=' + encodeURIComponent(vid) + '&ptsamt=' + asked_amt,
@@ -207,6 +221,13 @@ function loadDirectPriceShadowDOM() {
                         closeRewardModal.addEventListener('click', function() {
                             rewardModal.classList.remove('visible');
                         });
+
+                        redeemLink.addEventListener('click', function(e) {
+                          e.preventDefault();
+                          // alert(this.getAttribute('utid'));
+                          makeOrder(this.getAttribute('utid'));
+                        });
+
 
                     } else {
                         shadowRoot.getElementById('sp').innerText = 0;
@@ -279,14 +300,21 @@ function setCartData() {
                     var data_checkout_element = result[0].checkout_element;
                     var point = result[0].point_calc;
                     var conv = result[0].point_convert;
-                    var checkout_total = eval(data_checkout_element);
+                    var checkout_total = window.subtotal-window.discount;
+                    console.log(checkout_total);
+                    if(checkout_total===undefined){
+                        var checkout_total = eval(data_checkout_element);
+                        console.log('universal scraping code is not working');
+                    }else{
+                        console.log('universal scraping code is working cart total is '+checkout_total);
+                    }
                     chrome.storage.local.get(['data', 'cart_data'], function(result) {
                         var z = JSON.parse(result.data);
                         var cart_data = JSON.parse(result.cart_data);
                         console.log(cart_data);
                         var discount_amount = z.sale_commission;
 
-                        if (cart_data === null || (cart_data.cart_total == 0 || cart_data.points == 0) || (isNaN(cart_data.cart_total) || isNaN(cart_data.points))) {
+                        // if (cart_data === null || (cart_data.cart_total == 0 || cart_data.points == 0) || (isNaN(cart_data.cart_total) || isNaN(cart_data.points))) {
                             var direct_price = (parseFloat(discount_amount) * parseFloat(point) * parseFloat(checkout_total) * conv).toFixed(2);
                             console.log(direct_price);
                             cart_data = {
@@ -299,10 +327,10 @@ function setCartData() {
                             }, function() {
                                 console.log('Cart Data Saved', JSON.stringify(cart_data));
                             });
-                        } else {
-                            console.log('Cart Points:', cart_data.points);
-                            var direct_price = cart_data.points;
-                        }
+                        // } else {
+                        //     console.log('Cart Points:', cart_data.points);
+                        //     var direct_price = cart_data.points;
+                        // }
                         shadowRoot.getElementById('dp').innerText = direct_price;
                         shadowRoot.getElementById('pts').innerText = direct_price;
                     })
@@ -310,4 +338,136 @@ function setCartData() {
         }
     });
 }
-setTimeout(setCartData, 8000);
+
+// setTimeout(setCartData, 8000);
+
+window.Subtotal_price='';
+window.subtotal=0;
+
+window.Discount_price='';
+window.discount=0;
+
+window.watch_activated=false;
+
+window.subtotal_updater = function (findtext){
+
+function trimChar(r,t){for(;r.charAt(0)==t;)r=r.substring(1);for(;r.charAt(r.length-1)==t;)r=r.substring(0,r.length-1);return r}
+
+jQuery('div:contains("Sub Total")').find('*:contains("Sub Total"):visible').each(function(i,e){
+if(jQuery(e).contents().filter(function(){return this.nodeType == 3;}).first().text().toLowerCase().includes("Sub Total".toLowerCase(n))){
+jQuery(e).text('subtotal');
+}
+});
+
+jQuery('div:contains("'+findtext+'")').find('*:contains("'+findtext+'"):visible').each(function(i,e){
+if(jQuery(e).contents().filter(function(){return this.nodeType == 3;}).first().text().toLowerCase().includes(findtext.toLowerCase())){
+var relative_parent=jQuery(e).closest('*:contains("$")').first();
+//console.log(relative_parent)
+if(relative_parent.length ){
+var target_text_els=relative_parent.find('*:contains("$")');
+if(target_text_els.length)
+  var target_text=target_text_els.first().text().trim();
+else
+  var target_text=relative_parent.text().trim();
+
+target_text=trimChar(target_text,'$');
+if(target_text.includes('$'))
+  {Subtotal_price= target_text.slice(0, target_text.indexOf('$'));}
+else
+  {Subtotal_price=target_text;}
+Subtotal_price=jQuery.trim(Subtotal_price);
+}
+if(Subtotal_price != ''){
+Subtotal_price=Subtotal_price.replace('USD','');
+}
+Subtotal_price = jQuery.trim(Subtotal_price);
+
+var char_reg = /[a-zA-Z]/g;                    
+if(!char_reg.test(Subtotal_price) && Subtotal_price != ''){
+window.subtotal = Subtotal_price.replace(/[^0-9\.]+/g,"");
+
+jQuery('div:contains("discount")').find('*:contains("discount"):visible').each(function(i,e){
+  if(jQuery(e).contents().filter(function(){return this.nodeType == 3;}).first().text().toLowerCase().includes("discount".toLowerCase())){
+      var relative_parent_dis=jQuery(e).next('*:contains("$")').first();
+
+      if(relative_parent_dis.length ){
+
+          var target_text_dis_els=relative_parent_dis.find('*:contains("$")');
+          if(target_text_dis_els.length)
+              var target_text_dis=target_text_dis_els.first().text().trim();
+          else
+              var target_text_dis=relative_parent_dis.text().trim();
+
+          target_text_dis=jQuery.trim(target_text_dis);
+          target_text_dis=trimChar(target_text_dis,'-');
+          target_text_dis=jQuery.trim(target_text_dis);
+          target_text_dis=trimChar(target_text_dis,'$');
+          target_text_dis=jQuery.trim(target_text_dis);
+          target_text_dis=trimChar(target_text_dis,'-');
+          target_text_dis=jQuery.trim(target_text_dis);
+          target_text_dis=trimChar(target_text_dis,'$');
+          target_text_dis=jQuery.trim(target_text_dis);
+          target_text_dis=trimChar(target_text_dis,'-');
+          
+          if(target_text_dis.includes('$'))
+              {Discount_price= target_text_dis.slice(0, target_text_dis.indexOf('$'));}
+          else
+              {Discount_price=target_text_dis;}
+          Discount_price=jQuery.trim(Discount_price);
+      }
+      if(Discount_price != ''){
+          Discount_price=Discount_price.replace('USD','');
+      }
+      Discount_price = jQuery.trim(Discount_price);
+
+      var char_reg = /[a-zA-Z]/g;                    
+      if(!char_reg.test(Discount_price) && Discount_price != ''){
+          window.discount = Discount_price.replace(/[^0-9\.]+/g,"");
+      }
+  }
+});
+    setCartData();
+console.log(window.subtotal+','+window.discount);
+return false;
+}
+}
+});
+}
+
+if("undefined" == typeof jQuery)
+{
+var jq = document.createElement("script");jq.src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js?fdfg=sd", document.getElementsByTagName("head")[0].appendChild(jq);
+}
+var jqryinvl = setInterval(function() { if("undefined" != typeof jQuery) { clearInterval(jqryinvl);
+
+jQuery.expr[':'].contains = function(a, i, m) { 
+return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0; 
+};
+
+window.subtotal_updater('subtotal');
+if (window.subtotal==0)
+window.subtotal_updater('total before tax');
+
+
+(function() {
+var origOpen = XMLHttpRequest.prototype.open;
+XMLHttpRequest.prototype.open = function() {
+this.addEventListener('load', function() {
+window.watch_activated=true;
+});
+origOpen.apply(this, arguments);
+};
+})();
+
+
+setInterval(function(){
+if (window.watch_activated) {
+window.subtotal_updater('subtotal');
+if (window.subtotal==0)
+window.subtotal_updater('total before tax');
+window.watch_activated=false;
+}
+},3000);
+
+}
+},200);  

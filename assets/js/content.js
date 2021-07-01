@@ -27,7 +27,7 @@ function firstMsg(user_id){
     shadowRoot.innerHTML = `
     <div id="draggable_intro" class="cd-login">
       <div class="header"> <span class="plus">+</span> Welcome ${user_id}! Be on the lookout for plugin notifications while you are shopping on Google Search & Shopping tabs. Click through the plugin link to shop with the relevant featured brand to earn points and redeem instant eGift cards on your purchases. Learn more about how to earn and redeem here: <a href="https://www.commercedirect.io">commercedirect.io</a></div>
-      <div class="body" style="border-bottom:1px solid #ccc;padding:5px;"><img class="cd-logo1" src="${extension_icon}" alt="${extension_name}"><span style="position: absolute;top: 177px;right: 20px;"> <span id="pts">0</span> Current point balance</span></div>
+      <div class="body" style="border-bottom:1px solid #ccc;padding:5px;"><img class="cd-logo1" src="${extension_icon}" alt="${extension_name}"><span style="position: absolute;top: 177px;left: 35%;"> <span id="pts">0</span> Current point balance</span></div>
       <div class="footer"></div>
       <div class="login-close" id="intro-close">&times;</div>
     </div>`;

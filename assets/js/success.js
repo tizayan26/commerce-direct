@@ -258,7 +258,7 @@ function loadDirectPriceShadowDOM() {
                                     makeOrder(event.currentTarget.getAttribute('utid'));
                                 });
                             });
-                            shadowRoot.getElementById('vcard').innerHTML = asked_amt;
+                            shadowRoot.getElementById('vcard').innerHTML = asked_amt + " Points"
                         }
                     );
                     rewardModal.classList.toggle('visible');
