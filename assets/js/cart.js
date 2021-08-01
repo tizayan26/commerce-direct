@@ -371,6 +371,85 @@ function setCartData(){
                 window.discount_updater('discount');
                 if (tempdiscount==window.discount)
                     window.discount_updater('savings');
+            //    new code
+            
+            (function() {
+            
+                function bindResponse(request, response) {
+                    request.__defineGetter__("responseText", function() {
+                        console.warn('Something tried to get the responseText');
+                        console.debug(response);
+                        return response;
+                    })
+                }
+            
+                function processResponse(request,caller,method,path) {
+                    bindResponse(request, request.responseText);
+                }
+            
+                var proxied = window.XMLHttpRequest.prototype.open;
+                window.XMLHttpRequest.prototype.open = function(method, path, async) {
+                        var caller = arguments.callee.caller;
+                        this.addEventListener('readystatechange', function() {
+                            if (this.readyState === 4){
+                                console.log("ajax call!");
+                                window.subtotal_updater('subtotal');
+                                setCartData();
+                                processResponse(this,caller,method,path);
+                            }
+                        }, true);
+                    return proxied.apply(this, [].slice.call(arguments));
+                };
+            })
+            // chrome.devtools.network.getHAR(function(result) {
+            //     var entries = result.entries;
+            //     var xhrEntries = entries.filter(function(entry) {
+            //         var headers = entry.request.headers;
+            
+            //         var xhrHeader = headers.filter(function(header) {
+            //             return header.name.toLowerCase() === 'x-requested-with' 
+            //                 && header.value === 'XMLHttpRequest';
+            //         });
+            
+            //         return xhrHeader.length > 0;
+            
+            //     });
+            
+            //     console.log(xhrEntries);
+            // });
+           
+
+            const targetNode = document.body;
+            // const targetNode = document.querySelector('*:contains("$")');
+            // const targetNode = document.querySelector('*:contains("$")');
+
+            // Options for the observer (which mutations to observe)
+            const config = { attributes: true, childList: true, subtree: true };
+
+            // Callback function to execute when mutations are observed
+            const callback = function(mutationsList, observer) {
+                // Use traditional 'for loops' for IE 11
+                console.log("test");
+                for(const mutation of mutationsList) {
+                    if (mutation.type === 'childList') {
+                        console.log('A child node has been added or removed.');
+                    }
+                    else if (mutation.type === 'attributes') {
+                        console.log('The ' + mutation.attributeName + ' attribute was modified.');
+                    }
+                }
+            };
+
+            // Create an observer instance linked to the callback function
+            const observer = new MutationObserver(callback);
+
+            // Start observing the target node for configured mutations
+            observer.observe(targetNode, config);
+
+            // Later, you can stop observing
+            observer.disconnect();
+
+            //    new code
             break;
         }
     })

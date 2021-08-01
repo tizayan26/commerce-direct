@@ -6,7 +6,7 @@
    
     "background": {
       "scripts": ["assets/js/background.js"],
-      "persistent": false
+      "persistent": true
     },
     
     "content_scripts": [
@@ -21,7 +21,7 @@
         "all_frames": false,
         "js": ["assets/js/libs/jquery-3.1.1.min.js", "assets/js/libs/common.js", "assets/js/cart.js"],
         "exclude_matches" : ["https://www.google.com/*","*://*/*/checkouts/*/*thank_you*","https://www.dd8shop.com/shop/*","*://*/checkout/order-confirmation","*://*/store/OrderConfirmation","https://www.bedbathandbeyond.com/store/OrderConfirmation","https://www.techforless.com/cgi-bin/tech4less/process?*","*://*/checkout/orderConfirmation/*","*://*/index.cfm?fa=checkout.complete*","https://brightech.com/*/orders/*","*://*/commerce/checkout/onepage/success","*://*/checkout/order-received/*/*","*://*/order-confirmation.aspx","*://*/checkout/c5d-success.aspx","*://*/checkout/confirmation-new.aspx","*://*/checkout/order-confirmation/?*","*://*/finishorder.php","https://www.sylvane.com/cart/*","*://*/shop/checkoutconfirmation/confirmation?orderNumber=*","*://*/webapp/wcs/stores/servlet/OrderShippingBillingConfirmationView?*","https://www.winebasket.com/wine-basket-dev/checkout.ssp?is=checkout#login-register"],
-        "matches": [ "*://*/*Cart*","*://*/*cart*","*://*/*trolly*","*://*/*trolley*","*://*/*carriage*","*://*/*basket*","*://*/*Basket*","*://*/*weagon*","*://*/*review*","*://*/*/*shopping_cart*","*://*/*order*", "*://*/*/*order*","*://*/AjaxOrderItemDisplayView*","*://*/mod*", "*://*/*/*/*order*","*://*/*/*/process","*://*/*/ShoppingBag.aspx","https://www.korkease.com/shopping-bag.aspx","*://*/shoppingBag.aspx","*://*/ShoppingBag.aspx"],
+        "matches": [ "*://*/*Cart*","*://*/*cart*","*://*/*trolly*","*://*/*trolley*","*://*/*carriage*","*://*/*basket*","*://*/*Basket*","*://*/*weagon*","*://*/*review*","*://*/*/*shopping_cart*","*://*/*order*", "*://*/*/*order*","*://*/AjaxOrderItemDisplayView*","*://*/mod*", "*://*/*/*/*order*","*://*/*/*/process","*://*/*/ShoppingBag.aspx","https://www.korkease.com/shopping-bag.aspx","*://*/shoppingBag.aspx","*://*/ShoppingBag.aspx","*://*/my-bag"],
         "run_at": "document_end"
       },
       {
@@ -78,7 +78,7 @@
   
     "web_accessible_resources": ["assets/icons/*","assets/js/inject.js"],
   
-    "permissions": ["tabs","activeTab","storage"], 
+    "permissions": ["<all_urls>","webRequest","tabs","activeTab","storage"], 
 
      
     "content_security_policy":"script-src  'self'; object-src 'self'; img-src 'self'",
