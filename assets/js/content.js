@@ -312,6 +312,7 @@ $(document).ready(function() {
 						$.each(array, function(index, word) {
 							if (word !== undefined || word !== "" || word !== "undefined" || word !== null) {
 								word = getHostName(word);
+								if(word)
 								word = word.split('.')[0];
 								if (array[index] !== undefined) {
 									// console.log(url+':'+word);

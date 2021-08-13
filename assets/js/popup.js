@@ -6,7 +6,6 @@ var shadowRootPopup = host_popup.attachShadow({
 	mode: 'open'
 });
 loadDirectPriceShadowDOMP();
-
 function loadDirectPriceShadowDOMP() {
 	shadowRootPopup.innerHTML = `
       <div class="modal-wrap" id="modal-balance-popup">
@@ -85,8 +84,8 @@ function loadDirectPriceShadowDOMP() {
 			// user_id = result.userid;
 			user_id = "to Commerce Direct";
 			shadowRootPopup.getElementById("user").innerText = user_id;
-			shadowRootPopup.getElementById("user1").innerText = user_id;
-			shadowRootPopup.getElementById("user2").innerText = user_id;
+			// shadowRootPopup.getElementById("user1").innerText = user_id;
+			// shadowRootPopup.getElementById("user2").innerText = user_id;
 		}
 	});
 	shadowRootPopup.getElementById('reward_amt_popup').addEventListener("keyup", function() {
