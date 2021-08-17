@@ -12,7 +12,7 @@
     "content_scripts": [
       {
         "all_frames": false,
-        "exclude_matches" : ["https://www.google.com/*tbm*"],
+        "exclude_matches" : ["https://www.google.com/*tbm=isch*"],
         "js": ["assets/js/libs/jquery-3.1.1.min.js", "assets/js/libs/common.js", "assets/js/content.js"],
         "matches": ["*://www.google.com/*"],
         "run_at": "document_end"
