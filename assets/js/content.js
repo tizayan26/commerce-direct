@@ -16,7 +16,7 @@ window.onload = function() {
 				chrome.storage.local.set({
 					fmsg: false
 				}, function() {
-					console.log("first msg");
+					// console.log("first msg");
 				});
 			});
 		};
@@ -39,6 +39,7 @@ function firstMsg(user_id) {
 		method: 'GET'
 	}, function(result) {
 		result = JSON.parse(result);
+
 		if (result.body.qualified == "Y") {
 			shadowRoot.getElementById('pts').innerText = parseFloat(result.body.discount) * 100;
 		}
@@ -107,7 +108,7 @@ $(document).ready(function() {
 			var array = result.map(function(data) {
 				return data.domain;
 			});
-			console.log(array);
+
 			var poped = 0;
 			//option 1
 			if ($('a[rel="noopener"]').text() == '') {
@@ -120,12 +121,11 @@ $(document).ready(function() {
 							if (url) {
 								$.each(array, function(index, word) {
 									if (word !== undefined || word !== "" || word !== "undefined" || word !== null)
-										// if (word.split('.').length <= 3)
+						
 										if (word !== undefined) word = getHostName(word);
 									if (array[index] !== undefined) {
 										if (word.indexOf(url) > -1) {
-											console.log('option1', url + ':' + word + ':' + word.indexOf(url));
-											console.log('option1: ', index, 'url', array[index]);
+							
 											poped = 1;
 											if (shadowRoot.getElementById("draggable_popup") == null) {
 												loadDirectPriceShadowDOM(result[index]);
@@ -146,12 +146,11 @@ $(document).ready(function() {
 								if (url) {
 									$.each(array, function(index, word) {
 										if (word !== undefined || word !== "" || word !== "undefined" || word !== null)
-											// if (word.split('.').length <= 3)
+				
 											if (word !== undefined) word = getHostName(word);
 										if (array[index] !== undefined) {
 											if (word.indexOf(url) > -1) {
-												console.log('option2', url + ':' + word + ':' + word.indexOf(url));
-												console.log('option2: ', index, 'url', array[index]);
+	
 												poped = 1;
 												if (shadowRoot.getElementById("draggable_popup") == null) {
 													loadDirectPriceShadowDOM(result[index]);
@@ -176,8 +175,7 @@ $(document).ready(function() {
 										if (word !== undefined)
 											if (array[index] !== undefined) {
 												if (word.indexOf(url) > -1) {
-													console.log('option 3', url + ':' + word + ':' + word.indexOf(url));
-													console.log('option3: ', index, 'url', array[index]);
+								
 													if (shadowRoot.getElementById("draggable_popup") == null) {
 														loadDirectPriceShadowDOM(result[index])
 														return false;
@@ -192,25 +190,28 @@ $(document).ready(function() {
 				} else {
 					//option 4
 					$('.pla-unit').filter(function(i, data) {
-						var search = $(data).find('.pla-unit-container').children().eq(2).children().children().eq(2).text().trim().replace("'", "");
-						$.each(array, function(index, word) {
-							if (word !== undefined) word = getHostName(word);
-							if (word !== undefined && word !== null) {
-								word = word.split('.');
-								if (array[index] !== undefined) {
-									if (word.indexOf(search) > -1) {
-										console.log('option 4', search + ':' + word + ':' + word.indexOf(search));
-										console.log('option4: ', index, 'url', array[index]);
-										if (shadowRoot.getElementById("draggable_popup") == null) {
-											poped = 1;
-											loadDirectPriceShadowDOM(result[index]);
+						let search = $(data).find('.pla-unit-container').children().eq(2).children().children().eq(2).text().trim().replace("'", "");
+						if(search){
+							$.each(array, function(index, word) {
+
+								if (word !== undefined) word = getHostName(word);
+								if (word !== undefined && word !== null) {
+									word = word.split('.');
+									if (array[index] !== undefined) {
+										if (word.indexOf(search) > -1) {
+
+											if (shadowRoot.getElementById("draggable_popup") == null) {
+												poped = 1;
+												loadDirectPriceShadowDOM(result[index]);
+												return false;
+											}
 											return false;
 										}
-										return false;
 									}
 								}
-							}
-						});
+							});
+						}
+					
 					});
 					if (poped == 0) {
 						//option 5
@@ -218,28 +219,37 @@ $(document).ready(function() {
 							if ($(data2).children('div').children('div').children('div').children('a').find('.p8AiDd').text() == 'Ad·') {
 								var url = $(data2).children('div').children('div').children('div').children('a').find('.p8AiDd').siblings().first().text();
 								if (url !== undefined && url !== null) {
-									// url = getHostName(url.trim().replace(" ", "").toLowerCase());
+
 									url = url.trim().replace(" ", "").toLowerCase();
 									var url_array = url.split('.');
-									if (url_array.length <= 3 || url_array.length > 3) {
+
+									if (url_array.length <= 3) {
 										if (url_array[1] == 'com' || url_array[1] == 'net' || url_array[1] == 'co' || url_array[1] == 'us' || url_array[1] == 'uk' || url_array[1] == 'gov' || url_array[1] == 'uk' || url_array[1] == 'de' || url_array[1] == 'org') {
 											var url_s = url_array[0];
 										} else {
 											var url_s = url_array[1];
 										}
 									}
+									if(url_array.length > 3){
+										if (url_array[2] == 'com' || url_array[2] == 'net' || url_array[2] == 'co' || url_array[2] == 'us' || url_array[2] == 'uk' || url_array[2] == 'gov' || url_array[2] == 'uk' || url_array[2] == 'de' || url_array[2] == 'org') {
+											var url_s = url_array[1];
+										}
+										if(url_array[1].length >1){
+											var url_s = url_array[1];
+										}else{
+											var url_s = url_array[2];
+										}
+									}
 									if (url_array.length <= 2) var url_s = url_array[0];
+
 								}
 								if (url_s) {
 									$.each(array, function(index, word) {
-										console.log(word);
 										if (word !== undefined) word = getHostName(word);
 										if (word !== undefined && word !== null) {
 											word = word.split('.');
 											if (array[index] !== undefined) {
 												if (word.indexOf(url_s) > -1) {
-													console.log('option 5', url_s + ':' + word + ':' + word.indexOf(url_s));
-													console.log('option5: ', index, 'url', array[index]);
 													if (shadowRoot.getElementById("draggable_popup") == null) {
 														poped = 1;
 														loadDirectPriceShadowDOM(result[index]);
@@ -263,7 +273,6 @@ $(document).ready(function() {
 								if (url !== undefined && url !== null) {
 									url = getHostName(url.trim().replace(" ", "").toLowerCase());
 									var url_array = url.split('.');
-									console.log(url_array);
 									if (url_array.length <= 3 || url_array.length > 3) {
 										if (url_array[1] == 'com' || url_array[1] == 'net' || url_array[1] == 'co' || url_array[1] == 'us' || url_array[1] == 'uk' || url_array[1] == 'gov' || url_array[1] == 'uk' || url_array[1] == 'de' || url_array[1] == 'org') {
 											var url_s = url_array[0];
@@ -275,17 +284,11 @@ $(document).ready(function() {
 								}
 								if (url_s) {
 									$.each(array, function(index, word) {
-										console.log(word);
 										if (word !== undefined) word = getHostName(word);
 										if (word !== undefined && word !== null) {
 											word = word.split('.');
 											if (array[index] !== undefined) {
 												if (word.indexOf(url_s) > -1) {
-													// console.log(url_s);
-													// console.log(word.indexOf(url_s));
-													// console.log(index);
-													console.log('option 6', url_s + ':' + word + ':' + word.indexOf(url_s));
-													console.log('option6: ', index, 'url', array[index]);
 													if (shadowRoot.getElementById("draggable_popup") == null) {
 														poped = 1;
 														loadDirectPriceShadowDOM(result[index]);
@@ -310,29 +313,35 @@ $(document).ready(function() {
 					if (url === '' || url === undefined) url = $(data).text().replace(/["']/g, "").replace(" ", "").replace("'", "").trim().toLowerCase();
 					if (url !== null) {
 						$.each(array, function(index, word) {
-							if (word !== undefined || word !== "" || word !== "undefined" || word !== null) {
+							if (word !== undefined || word !== "" || word !== "undefined" || word != null) {
 								word = getHostName(word);
-								if(word)
-								word = word.split('.')[0];
+								if(word!=null)
+								word_array = word.split('.');
+								if(word_array.length<=2){
+									word = word_array[0];
+								}else if(word_array.length>=3){
+									if(word_array.length>2){
+										if(word_array[1].length==2)
+										word = word_array[2];
+										else
+										word = word_array[1];
+									}
+									else if(word_array.length>3){
+										word = word_array[2];
+									}
+								}
+							
 								if (array[index] !== undefined) {
-									// console.log(url+':'+word);
-									// var regex = new RegExp(`\B${word}\B`, 'g');
+									
 									var regex = new RegExp(word, 'g');
-									// var regex = new RegExp(`/(?:\W|^)(\Q$${word}\E)(?:\W|$)/i`,'g');
-									// /(?:\W|^)(\Q$word\E)(?:\W|$)/i
-									// var regex1 = new RegExp(url, 'g');
-									// var regex1 = new RegExp(`/(?:\W|^)(\Q$${url}\E)(?:\W|$)/i`,'g');
+								
 									if (url.match(regex) != null) { //|| word.match(regex1) != null
-										// console.log(index);
-										console.log(data);
-										console.log('option 7', url + ':' + word + ':' + word.indexOf(url));
-										console.log('option7: ', index, 'url', array[index]);
+										
 										if (shadowRoot.getElementById("draggable_popup") == null) {
 											loadDirectPriceShadowDOM(result[index]);
 											return false;
 										}
 										if (index != null) {
-											console.log(url.match(regex));
 											return false;
 										}
 										return false;
